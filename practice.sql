@@ -52,6 +52,8 @@ values ('Anjali',349,35,'anjaligaikwad@gmail.com','F'),
 ---
 select * from company
 ---
+select * from company where empname in ('Anjali')
+------
 alter table company add job_id varchar(90)
 ----
 update company 
@@ -83,8 +85,18 @@ select empid,empname,job_id,salary from company
 where salary not in ( select salary from company where job_id='Manager')
 and job_id <>'Manager'
 -----
-
+select empid,empname,job_id,salary from company 
+where salary<Any(select salary from company where job_id='Manager')
+and job_id <>'Manager'
 --------
+select * from company where not exists (select empid from company where empid=349) --not working
+
+select * from company where empid<>349
+---------
+select empid,empname,job_id,salary from company
+where salary <(select avg(salary) from company) 
+--------
+
 create table students(
 name varchar(10) default 'UNKNOWN',
 Sid int primary key,
@@ -233,3 +245,107 @@ select avg(marks) as Avg_marks from exam
 select min(marks) as mini_marks from exam
 select max(marks) as max_marks from exam
 select sname, marks from exam where marks>89
+
+--------------
+create table person2(
+driverid int primary key,
+pname varchar(80),
+address varchar(100)
+)
+
+create table car(
+license varchar(70) primary key,
+model varchar(50),
+myear varchar(60)
+)
+create table accident(
+reportCno varchar(70),
+acc_date date,
+acc_location varchar(80)
+)
+create table owns(
+driverid int references person2(driverid),
+license varchar(70) references car(license)
+)
+create table participated(
+driverid int references person2(driverid),
+report_number int,
+damage_amount decimal(8,2)
+)
+-------
+INSERT INTO person2 (driverid, pname, address)
+VALUES
+    (101, 'Ravi Sharma', 'Mumbai'),
+    (102, 'Anjali Patil', 'Pune'),
+    (103, 'Akshay Kumar', 'Nashik'),
+    (104, 'Sunita Deshmukh', 'Thane'),
+    (105, 'Yogesh Tiwari', 'Nagpur'),
+	(106, 'Ajay','Navi Mumbai')
+INSERT INTO car (license, model, myear)
+VALUES
+    ('MH01AB1234', 'Hyundai Creta', '2022'),
+    ('MH12CD5678', 'Honda City', '2021'),
+    ('MH15EF9012', 'Tata Nexon', '2023'),
+    ('MH04GH3456', 'Maruti Swift', '2020'),
+    ('MH31IJ7890', 'Toyota Innova', '2022'),
+	('MH478X1973','Tesla','2023')
+INSERT INTO accident (reportCno, acc_date, acc_location)
+VALUES
+    ('R001', '2026-01-15', 'Andheri, Mumbai'),
+    ('R002', '2026-02-20', 'Kothrud, Pune'),
+    ('R003', '2026-03-10', 'Nashik Road'),
+    ('R004', '2026-04-05', 'Thane West'),
+    ('R005', '2026-05-18', 'Nagpur Highway'),
+	('R006','2026-06-19','Panvel')
+INSERT INTO owns (driverid, license)
+VALUES
+    (101, 'MH01AB1234'),
+    (102, 'MH12CD5678'),
+    (103, 'MH15EF9012'),
+    (104, 'MH04GH3456'),
+    (105, 'MH31IJ7890'),
+	(106,'MH478X1973')
+INSERT INTO participated (driverid, report_number, damage_amount)
+VALUES
+    (101, 1, 25000.00),
+    (102, 2, 15000.50),
+    (103, 3, 45000.00),
+    (104, 4, 12000.75),
+    (105, 5, 30000.00),
+	(106,6,18400.50)
+---------
+select count(*) from accident 
+where reportCno in (select report_number from participated 
+where driverid in (select driverid from person2 where pname='Anjali Patil' 
+))
+--------
+alter table participated 
+alter column report_number type varchar(70)
+--------
+alter table participated add car varchar(50)
+------
+UPDATE participated
+SET car = 'Hyundai Creta'
+WHERE driverid=101;
+
+UPDATE participated
+SET car = 'Honda City'
+WHERE driverid=102;
+
+UPDATE participated
+SET car = 'Tata Nexon'
+WHERE driverid=103;
+
+UPDATE participated
+SET car = 'Maruti Swift'
+WHERE driverid=104;
+
+UPDATE participated
+SET car = 'Toyota Innova'
+WHERE driverid=105;
+
+update participated
+set car = 'Tesla'
+where driverid=106;
+-------------
+alter table car drop column car
