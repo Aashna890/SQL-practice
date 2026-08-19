@@ -1,5 +1,3 @@
-
-
 create table Student1(
 studentId int,
 name varchar(50),
@@ -349,3 +347,101 @@ set car = 'Tesla'
 where driverid=106;
 -------------
 alter table car drop column car
+-----------------------------------------
+create table employee(
+eid int primary key,
+name varchar(40),
+street varchar(80),
+city varchar(60)
+)
+select * from employee
+insert into employee
+values (101,'Ajay', 'malad','Mumbai'),
+		(102,'Anjali', 'Panvel','Navi Mumbai'),
+		(103,'devyani','kharghar','Navi Mumbai'),
+		(104,'Harsha', 'kamothe','Navi Mumbai'),
+		(105,'Jagdish','Kamal chowk','Nagpur'),
+		(106,'Amey','pimpri chinchwad','Pune')
+---------------------
+create table works(
+eid int references employee(eid),
+cid int primary key,
+salary decimal(8,2)
+)
+insert into works
+values (101,1001,45000.00),
+		(102,1002,85000.00),
+		(103,1003,25000.00),
+		(104,1004,50000.00),
+		(105,1005,100000.00),
+		(106,1006,55000.00)
+------------------
+create table manager(
+eid int references employee(eid),
+manager_name varchar(90)
+)
+insert into manager
+values (102, 'Anjali'),
+		(105,'Jagdish')
+---------------------
+create table company1(
+cid int references works(cid),
+company_name varchar(80),
+city varchar(50)
+)
+insert into company1
+values (1001, 'TCS','Mumbai'),
+		(1002,'Reliance','Mumbai'),
+		(1003,'Godreg','Bangorole'),
+		(1004,'Jio','turbhe'),
+		(1005,'TCS','Mumbai'),
+		(1006,'Infosys','Pune')
+----------------------------------
+update employee
+set city='Mumbai',
+	street='Bandra'
+where eid=104
+----------------------------------
+select * from employee order by eid
+-----------------------------
+select eid,name,city from employee
+where city in (select city from company1
+				where eid=employee.eid)
+-------------------------
+select * from employee
+select name,city from employee
+select name,city from employee where city='Navi Mumbai'
+select eid,name from employee where eid>103
+select eid,name from employee where eid between 102 and 105
+select eid,name from employee where name='Anjali'
+select eid,name,city from employee where city in (select city from employee where city='Mumbai' or city= 'Pune')
+select eid,name,city from employee where city<>'Mumbai'
+select name from employee where name like 'A%'
+-------------------------------
+update works 
+set salary=60000.00
+where eid=106
+
+update works
+set salary= salary+5000
+select * from works
+
+select max(salary) from works
+
+select min(salary) from works
+
+select avg(salary) from works
+
+select count(eid) from works
+
+select count(salary) from works where salary>50000
+
+select avg(salary) from works where salary>50000
+
+select city,count(city) as count_city from employee group by city
+
+select e.city,avg(w.salary) As average_sal from employee as e 
+join works as w
+on e.eid=w.eid
+group by e.city
+---------------------------
