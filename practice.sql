@@ -4,19 +4,32 @@ name varchar(50),
 age int,
 dept varchar(20)
 )
+------------------------------
 truncate table Student1
+----------------------------------
 select * from Student1
+------------------------------------
 insert into student1
 values (1,'A',20,'CMPN'),
        (2,'B',20,'CMPN'),
 	   (3,'C',20,'CMPN'),
-	   (4,'D',21,'INFT')
+	   (4,'D',21,'INFT'),
+	   (5,'E',23,'EXTC'),
+	   (6,'F',21,'EXTC')
+-----------------------------------
+select dept,count(studentId) as stud_ID from Student1
+group by dept
+having count(studentId)>1
+------------------------------
 delete from student1
 where studentID=1
+---------------------
 alter table student1 add email varchar(40) unique
+-----------------------------------
 update student1
 set email='abc@gmail.com'
 where studentID=1
+----------------------------
 alter table student1 rename column name to Full_Name
 
 create table learners(
@@ -445,3 +458,51 @@ join works as w
 on e.eid=w.eid
 group by e.city
 ---------------------------
+select max(w.salary) as max_sal,e.city from employee as e
+join works as w
+on e.eid=w.eid
+group by e.city
+-----------------------
+select avg(w.salary) as avg_sal,e.city from employee as e
+join works as w
+on e.eid=w.eid
+group by e.city
+having avg(w.salary)>50000
+------------------
+---textbook questions
+select e.eid,e.name,m.manager_name from employee as e
+join manager as m
+on e.eid=m.eid
+-------------
+select city,count(*) "total_emp"
+from employee 
+group by city
+---------------
+select avg(salary) from works 
+where salary>35000
+group by eid
+----------------
+select city,count(*) from employee 
+group by city
+having count(*)>1
+---------------
+select max(salary) "second highest" from works
+where salary<(select max(salary) from works)
+----------------------
+select salary from works
+order by salary desc
+limit 1 offset 1
+select * from works
+
+
+
+
+
+
+
+
+
+
+
+
+
