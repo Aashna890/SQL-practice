@@ -1,3 +1,4 @@
+
 create table Student1(
 studentId int,
 name varchar(50),
@@ -16,6 +17,11 @@ values (1,'A',20,'CMPN'),
 	   (4,'D',21,'INFT'),
 	   (5,'E',23,'EXTC'),
 	   (6,'F',21,'EXTC')
+---------------------
+select s1.studentId from student1 as s1
+join student1 as s2
+on s1.studentId=s2.studentId
+where s1.studentId=s2.studentId and s1.age <> s2.age
 -----------------------------------
 select dept,count(studentId) as stud_ID from Student1
 group by dept
@@ -248,6 +254,7 @@ values (1,'Mahesh',90),
 		(4,'Sachin',99),
 		(5,'Vishal',88),
 		(6,'Payal',90)
+
 select * from exam
 select count(sid) as sid_count from exam
 select count(distinct sid) as dist_count from exam
@@ -389,6 +396,11 @@ values (101,1001,45000.00),
 		(105,1005,100000.00),
 		(106,1006,55000.00)
 ------------------
+select salary from works
+where salary=(select max(salary) from works 
+				where salary<(select max(salary) 
+				from works))
+-----------------
 create table manager(
 eid int references employee(eid),
 manager_name varchar(90)
@@ -493,14 +505,71 @@ select salary from works
 order by salary desc
 limit 1 offset 1
 select * from works
+---------------
+create table department(
+did int primary key,
+dname varchar(60)
+)
+create table employee2(
+eid int primary key,
+ename varchar(70),
+did int references department(did)
+)
+------------
+insert into department
+values (100,'HR'),
+		(200,'TIS');
+--------------------
+update employee2
+set salary=case
+when eid=1 then 35000.00
+when eid=2 then 42000.00
+when eid=3 then 38000.00
+end
+update employee2
+set eid=case
+when eid=35000 then 1
+when eid=42000 then 2
+when eid=38000 then 3
+end
+-----------------
+select * from employee2
+---------------------
+select d.dname "Department",e.ename "Employee",e.salary "Salary" from employee2 as e
+join department as d
+on e.did=d.did
+where (e.did,e.salary) in (select did,max(salary) from employee2
+							order by did)
+----------------
+alter table employee2 add salary decimal(8,2)
+alter table department drop salary
+----------------------
+insert into employee2
+values  (1,'Mahesh',100),
+			(2,'Sugas',200),
+			(3,'Jayendra',100);
+--------------------------
 
+-------------------------
+drop table employee2
+drop table department
+----------------------joins----------------
+select e.eid as Eid,e.ename "Ename",e.did as Did,d.did "Did",d.dname as Dname
+from employee2 as e cross join department as d
+-------------------------
+select e.eid,e.ename,e.did,d.did from employee2 as e 
+inner join department as d
+on e.did=d.did
+--where d.did=100
+-----------------------
+select e.eid "Eid",d.did "Depart_id",d.dname "D_name" from employee2 as e 
+natural join department d
+--where d.dname='HR'
+------------------------
+select distinct ename from employee2
+-------------------------
 
-
-
-
-
-
-
+-------------------
 
 
 
