@@ -568,10 +568,58 @@ natural join department d
 ------------------------
 select distinct ename from employee2
 -------------------------
+CREATE TABLE Employee3 (
+    emp_id INT,
+    emp_name VARCHAR(50),
+    dept_id INT,
+    salary INT,
+    manager_id INT,
+    joining_date DATE
+);
 
+CREATE TABLE Department1 (
+    dept_id INT,
+    dept_name VARCHAR(50)
+);
 -------------------
+insert into employee3
+values (1,	'Aashna',	10,	60000,	NULL,	'2023-01-10'),
+(2,	'Rahul',	20,	75000,	1,	'2022-06-15'),
+(3,	'Priya'	,10,	80000,	1,	'2021-03-20'),
+(4,	'Amit'	,30,	50000,	2,	'2024-01-12'),
+(5,	'Sneha',	20,	90000,	2,	'2020-11-05')
 
+insert into department1
+values (10	,'IT'),
+(20	,'HR'),
+(930,	'Finance'),
+(40	,'Marketing')
 
+select emp_name,salary from employee3
+where salary between 60000 and 80000
+order by salary desc
 
+select e.dept_id,count(e.emp_id) from employee3 as e
+join department1 as d
+on e.dept_id=d.dept_id
+group by e.dept_id
 
-
+-------------
+select e.dept_id,count(e.emp_id) from employee3 as e
+join department1 as d
+on e.dept_id=d.dept_id
+group by e.dept_id
+having count(e.emp_id)>2
+-------------
+select max(salary) from employee3
+select min(salary) from employee3
+select avg(salary) from employee3
+---------------
+alter table employee3 add salary_category varchar(50)
+select emp_name,salary,salary_category from employee3
+update employee3
+set salary_category=case
+when salary>=80000 then 'High'
+when salary>=60000 then 'Medium'
+when salary<60000 then 'Low'
+end
