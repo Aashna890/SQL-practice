@@ -594,6 +594,8 @@ values (10	,'IT'),
 (20	,'HR'),
 (930,	'Finance'),
 (40	,'Marketing')
+--------------
+
 
 select emp_name,salary from employee3
 where salary between 60000 and 80000
@@ -623,3 +625,34 @@ when salary>=80000 then 'High'
 when salary>=60000 then 'Medium'
 when salary<60000 then 'Low'
 end
+--------------------
+select * from employee3
+
+select *, max(salary) over() as max_salary
+from employee3
+------------
+select *, max(salary) over(partition by salary) as max_salary
+from employee3
+-----------------
+create table emp2(
+emp_id int primary key,
+emp_name varchar(60),
+dept_name varchar(40),
+salary decimal(8,2)
+)
+insert into emp2
+values (101,'Cory','HR',65000.70),
+		(102,'Kylie','HR',40000.00),
+		(103,'emily','Finance',55000.00),
+		(104,'Brain','IT',70000.00),
+		(105,'Peter','Finance',58946.95),
+		(106,'Kenji','IT',75000.00),
+		(107,'Henry','HR',45895.98),
+		(108,'Samantha','IT',63000.34)
+-------------------------
+select *,max(salary) over(partition by dept_name order by emp_id) from emp2
+--------------------
+select *,row_number() over(partition by dept_name order by emp_id) as id_num
+from emp2
+-----------------
+select *, rank() over(partition by dept_name order by salary) from emp2
