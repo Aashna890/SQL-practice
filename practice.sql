@@ -571,14 +571,14 @@ select distinct ename from employee2
 CREATE TABLE Employee3 (
     emp_id INT,
     emp_name VARCHAR(50),
-    dept_id INT,
+    dept_id INT references department1(dept_id),
     salary INT,
     manager_id INT,
     joining_date DATE
 );
 
 CREATE TABLE Department1 (
-    dept_id INT,
+    dept_id INT primary key,
     dept_name VARCHAR(50)
 );
 -------------------
@@ -586,7 +586,7 @@ insert into employee3
 values (1,	'Aashna',	10,	60000,	NULL,	'2023-01-10'),
 (2,	'Rahul',	20,	75000,	1,	'2022-06-15'),
 (3,	'Priya'	,10,	80000,	1,	'2021-03-20'),
-(4,	'Amit'	,30,	50000,	2,	'2024-01-12'),
+(4,	'Amit'	,930,	50000,	2,	'2024-01-12'),
 (5,	'Sneha',	20,	90000,	2,	'2020-11-05')
 
 insert into department1
@@ -595,8 +595,14 @@ values (10	,'IT'),
 (930,	'Finance'),
 (40	,'Marketing')
 --------------
-
-
+drop table employee3;
+drop table department1;
+-------------------
+select e.emp_id,e.emp_name,d.dept_id,d.dept_name from employee3 as e
+join department1 as d
+on e.dept_id=d.dept_id
+where d.dept_id is Null
+----------------
 select emp_name,salary from employee3
 where salary between 60000 and 80000
 order by salary desc
@@ -655,4 +661,28 @@ select *,max(salary) over(partition by dept_name order by emp_id) from emp2
 select *,row_number() over(partition by dept_name order by emp_id) as id_num
 from emp2
 -----------------
+select * from (
+	select *,row_number() over(partition by dept_name order by emp_id) as rank
+	from emp2) as a
+where a.rank<=2
+----------------------------	
 select *, rank() over(partition by dept_name order by salary) from emp2
+------------
+select *, rank() over(partition by dept_name order by salary) as rank,
+dense_rank() over(partition by dept_name order by salary) as den_rank
+from emp2
+--------------------
+select *, lag(salary,1,0) over(partition by dept_name order by emp_id) as last_salary
+from emp2
+------------------------
+select *,lag(salary) over(partition by dept_name order by emp_id) as last_sal,
+lead(salary) over(partition by dept_name order by emp_id) as next_sal
+from emp2
+---------------
+select dept_name,max(salary)
+from emp2
+group by dept_name
+--------comparing--------
+select dept_name,salary,max(salary) over(partition by dept_name) as max_sal
+from emp2
+
