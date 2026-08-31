@@ -1,4 +1,3 @@
-
 create table Student1(
 studentId int,
 name varchar(50),
@@ -595,6 +594,16 @@ values (10	,'IT'),
 (930,	'Finance'),
 (40	,'Marketing')
 --------------
+select e.emp_name,d.dept_name,e.salary from employee3
+as e join department1 as d
+on e.dept_id=d.dept_id
+--------
+select e.emp_name from employee3 as e left join department1 as d
+on e.dept_id=d.dept_id
+where d.dept_id is null
+----------
+select emp_name from employee3 where dept_id not in (select dept_id from department1 where dept_id is not null)
+--------
 drop table employee3;
 drop table department1;
 -------------------
@@ -603,6 +612,11 @@ join department1 as d
 on e.dept_id=d.dept_id
 where d.dept_id is Null
 ----------------
+select d.dept_name from department1 as d
+left join employee3 as e 
+on d.dept_id=e.dept_id
+where e.emp_id is null
+----------
 select emp_name,salary from employee3
 where salary between 60000 and 80000
 order by salary desc
@@ -685,4 +699,7 @@ group by dept_name
 --------comparing--------
 select dept_name,salary,max(salary) over(partition by dept_name) as max_sal
 from emp2
+--------------------
+
+
 
